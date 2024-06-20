@@ -151,15 +151,16 @@ def load_llava(llava_model_path):
     )
 
 
-def load_clip(clip_model="hf-hub:laion/CLIP-ViT-H-14-laion2B-s32B-b79K"):
+def load_clip(clip_model_name="hf-hub:laion/CLIP-ViT-H-14-laion2B-s32B-b79K"):
     print("Loading CLIP")
 
-    clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(clip_model)
-    clip_tokenizer = open_clip.get_tokenizer(clip_model)
+    clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(clip_model_name)
+    clip_tokenizer = open_clip.get_tokenizer(clip_model_name)
 
     print("Loaded CLIP")
 
     return clip_model, clip_tokenizer, clip_preprocess
+
 
 
 sd_models = {
@@ -172,8 +173,7 @@ def load_stable_diffusion(model_name):
     print("Loading Stable Diffusion Pipeline")
 
     pipe = StableDiffusionPipeline.from_pretrained(
-        sd_models[model_name], torch_dtype=torch.float16, local_files_only=True
-    )
+        sd_models[model_name], torch_dtype=torch.float16, local_files_only=False)
     pipe = pipe.to("cuda")
     scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
     scheduler.set_timesteps(20)
@@ -287,7 +287,7 @@ def main(args):
     seed = args.seed
     images_per_class = args.images_per_class
 
-    dataset_root = f"{datasets_root}/{dataset}-by-seed"
+    dataset_root = f"{datasets_root}/{dataset}"
 
     class_names_ori = os.listdir(f"{dataset_root}/seed_1")
     class_names = class_names_ori.copy()
@@ -450,7 +450,7 @@ if __name__ == "__main__":
     parser.add_argument("--mixup", action="store_true", help="Use mixup for images")
     parser.add_argument("--cfg_strength", type=float, default=8.0)
     parser.add_argument("--batch_size", type=int, default=8)
-    parser.add_argument("--images_per_class", type=int, default=64)
+    parser.add_argument("--images_per_class", type=int, default=10)
 
     args = parser.parse_args()
 

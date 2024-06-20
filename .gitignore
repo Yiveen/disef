@@ -1,5 +1,11 @@
 **/wandb/
 fine-tune/data/
+fine-tune/few_shot_selection
+fine-tune/selected_fewshots
+generation/LLaVA
+generation/llava_pretrain
+generation/output
+generation/output_step15
 *.ckpt
 *.pdf
 *.png
